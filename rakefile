@@ -1,0 +1,27 @@
+# Rakefile for my resume build script 
+
+require 'yaml'
+require 'erb' 
+
+$pc = 'pdflatex'
+$pcopts = ''
+
+$data = ''
+
+task :default => 'resume.pdf'
+
+# Generate PDFs from generated latex doc
+rule '.pdf' => '.tex' do |f|
+    sh "#{$pc} #{f.source} #{$pcopts}"
+end
+
+# Generate latex doc from template and metadata
+file 'resume.tex' => ['resume.erb','metadata.yml'] do |f|
+    yaml_data = File.binread('metadata.yml')
+    $data = YAML.load(yaml_data)
+    erb_template = File.binread('resume.erb')
+    erb_stuff = ERB.new(erb_template)
+    File.write('resume.tex',erb_stuff.result)
+end
+
+

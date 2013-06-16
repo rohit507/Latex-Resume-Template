@@ -1,0 +1,253 @@
+% Original Author : Seth Holloway 
+% Source : http://sethholloway.com/blog/2011/06/24/my-latex-resume-template/
+% IRB Templatized By : Rohit Ramesh
+
+\documentclass[9pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[usenames]{color}
+
+\leftmargin=0.25in
+\oddsidemargin=0.25in
+\textwidth=6.0in
+\topmargin=-0.25in
+\textheight=9.25in
+
+\raggedright
+
+\pagenumbering{arabic}
+
+\def\bull{\vrule height 0.8ex width .7ex depth -.1ex }
+% DEFINITIONS FOR RESUME
+
+\newenvironment{changemargin}[2]{%
+  \begin{list}{}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\leftmargin}{#1}%
+    \setlength{\rightmargin}{#2}%
+    \setlength{\listparindent}{\parindent}%
+    \setlength{\itemindent}{\parindent}%
+    \setlength{\parsep}{\parskip}%
+  }%
+  \item[]}{\end{list}
+}
+
+\newcommand{\lineover}{
+	\begin{changemargin}{-0.05in}{-0.05in}
+		\vspace*{-8pt}
+		\hrulefill \\
+		\vspace*{-2pt}
+	\end{changemargin}
+}
+
+\newcommand{\header}[1]{
+	\begin{changemargin}{-0.5in}{-0.5in}
+		\scshape{#1}\\
+  	\lineover
+	\end{changemargin}
+}
+
+\newcommand{\contact}[4]{
+	\begin{changemargin}{-0.5in}{-0.5in}
+		\begin{center}
+            <% if $data['name'] %>
+                {\Large \scshape {#1}}\\ \smallskip
+            <% end %>
+            <% if $data['website'] %>
+                {#2}\\ \smallskip 
+            <% end %>
+            <% if $data['e-mail'] %>
+                {#3}\\ \smallskip
+            <% end %>
+            <% if $data['phone'] %>
+                {#4}\smallskip
+            <% end %>
+		\end{center}
+	\end{changemargin}
+}
+
+\newenvironment{body} {
+	\vspace*{-16pt}
+	\begin{changemargin}{-0.25in}{-0.5in}
+  }	
+	{\end{changemargin}
+}	
+
+\newcommand{\school}[4]{
+	\textbf{#1} \hfill \emph{#2\\}
+	#3\\ 
+	#4\\
+}
+
+% END RESUME DEFINITIONS
+
+\begin{document}
+
+%%%%% Header %%%%%%
+
+% Name
+\contact{<%= $data['name'] or "" %>}{<%= $data['website'] or "" %>}{<%= $data['e-mail'] or "" %>}{<%= $data['phone'] or "" %>}
+
+
+%%%%% Objective %%%%%
+
+<% if $data['Objective'] %>
+    \header{Objective}
+    \begin{body}
+	    \vspace{14pt}
+	    <%= $data['Objective'] %>
+    \end{body}
+    \smallskip
+<% end %>
+
+%%%%% Education %%%%%
+
+<% if $data['Education'] %>
+    \header{Education}
+    \begin{body}
+        \vspace{14pt}
+        <% $data['Education'].each_index do |ind| %>
+            <% edu = $data['Education'][ind] %>
+
+            \textbf{<%= edu['degree'] %>} \hfill 
+            \emph{<%= edu['time'] %>} \\
+            \emph{<%= edu['institution'] %>}, 
+            <%= edu['location'] %> \\
+
+            <% if ind < ($data['Education'].size - 1) %>
+                \medskip
+            <% end %>
+        <% end %>
+    \end{body}
+    \smallskip
+<% end %>
+
+%%%%% Experience %%%%%%
+
+<% if $data['Experience'] %>
+    \header{Career History}
+
+    \begin{body}
+        \vspace{14pt}
+        <% $data['Experience'].each do |exp| %>
+
+            \textbf{<%= exp['institution']%>}, 
+            \emph{<%= exp['title'] %>} 
+            \hfill \emph{<%= exp['time'] %>}\\
+            \vspace*{-4pt}
+
+            \begin{itemize} \itemsep -0pt % shrink list
+            <% exp['duties'].each do |duty| %>
+                \item <%= duty %>
+            <% end %>
+            \end{itemize}
+
+        <% end %>
+    \end{body}
+    \smallskip
+<% end %>
+
+% \newpage{} % uncomment this to force a new page
+
+%%%%%%% Academic Projects %%%%%%
+
+<% if $data['Academics'] %>
+    \header{Academic Projects}
+
+    \begin{body}
+        \vspace{14pt}
+        <% $data['Academics'].each do |aca| %>
+
+            \textbf{<%= aca['field']%>}, 
+            \emph{<%= aca['environment'] %>} 
+            \hfill \emph{<%= aca['time'] %>}\\
+            \vspace*{-4pt}
+
+            \begin{itemize} \itemsep -0pt % shrink list
+            <% aca['actions'].each do |act| %>
+                \item <%= act %>
+            <% end %>
+            \end{itemize}
+
+        <% end %>
+    \end{body}
+    \smallskip
+<% end %>
+
+%%%%% Publications %%%%%
+
+<% if $data['Publications'] %>
+    \header{Selected Publications}
+    \begin{body}
+        \vspace{14pt}
+        <% $data['Publications'].each_with_index do |pub,i| %>
+            <%= pub['author'] %>. 
+            ``\textbf{<%= pub['title'] %>},'' in 
+            \emph{<%= pub['publication'] %>}. <%= pub['time'] %>.\\
+            <% if i < $data['Publications'].size - 1 %>  
+                \smallskip
+            <% end %>
+        <% end %>
+    \end{body}
+    \smallskip
+<% end %>
+
+%%%%% Skills %%%%%%
+
+<% if $data['Skills'] %>
+    \header{Skills}
+    \begin{body}
+        \vspace{14pt}
+        <% $data['Skills'].each_with_index do |sk,i| %>
+
+            \emph{\textbf{<%= sk['field'] %>:}}{} 
+            <%= sk['tools'].join(', ') %>\\
+
+            <% if i < $data['Skills'].size - 1 %> 
+                \medskip
+            <% end %>
+
+        <% end %>
+    \end{body}
+    \smallskip
+<% end %>
+
+%%%%% Leadership %%%%%%
+
+<% if $data['Leadership'] %> 
+    \header{Leadership Activities}
+    \begin{body}
+    \vspace{14pt}
+        <% $data['Leadership'].each_with_index do |pos,i| %>
+            \textbf{<%= pos['position'] %>}, 
+            <%= pos['organization'] %> 
+            \hfill {} \emph{<%= pos['time'] %>}\\
+
+            <% if i < $data['Leadership'].size - 1 %>
+                \smallskip
+            <% end %>
+
+        <% end %>
+    \end{body}
+    \smallskip
+<% end %>
+
+%%%%%% Awards and Honors %%%%%
+
+<% if $data['Awards'] %>
+    \header{Awards and Honors}
+    \begin{body}
+	    \vspace{14pt}
+        <% $data['Awards'].each_with_index do |awd,i| %>
+            \textbf{<%= awd['name'] %>}, 
+            <%= awd['institution'] %>
+            \hfill{} \emph{<%= awd['time'] %>}\\
+            <% if i < $data['Awards'].size - 1 %>
+                \smallskip
+            <% end %>
+        <% end %> 
+    \end{body}
+<% end %>
+
+\end{document}
