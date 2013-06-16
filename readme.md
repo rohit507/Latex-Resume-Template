@@ -14,4 +14,4 @@ want to remove sections from the final output.
 Within each first level block, take care to keep the format of 
 subentries the same, otherwise the script will break.
 
-
+In order to use this you'll need ruby, rake, and LaTeX
